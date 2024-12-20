@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import "./DAObiContract3.sol";
+import "./interfaces/IDAObi3.sol";
 
-contract DaobiVoteContract is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, PausableUpgradeable, AccessControlUpgradeable, UUPSUpgradeable {
+contract DaobiVoteContract is Initializable, PausableUpgradeable, AccessControlUpgradeable, ERC721URIStorageUpgradeable, UUPSUpgradeable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");//can pause contract
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE"); //can initiate new daobi voters
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE"); //contract admin (do not confuse with ADMIN_ROLE)
@@ -28,9 +27,6 @@ contract DaobiVoteContract is Initializable, ERC721Upgradeable, ERC721URIStorage
 
     //maps addresses to their Voter info
     mapping (address => Voter) public voterRegistry;
-
-    //where the NFT metadata URI is located.  This should be a URL pointing to a JSON file in accordance with the OpenSea format (https://docs.opensea.io/docs/metadata-standards)
-    string public URIaddr;
 
     //Basic idea: Once someone is verified, they are minted a voting token.  This allows them to (register to) vote, and qualifies them to receive votes.
     //They can vote for anyone, including themselves or 0x0 (i.e., abstain)
@@ -52,10 +48,10 @@ contract DaobiVoteContract is Initializable, ERC721Upgradeable, ERC721URIStorage
 
     uint256 public propertyRequirement; //minimum number of tokens that must be held to vote.
     address payable public tokenContract;
-    DAObi daobi;
+    IDAObi3 daobi;
 
-    bytes32 public constant VOTE_ADMIN_ROLE = keccak256("VOTE_ADMIN_ROLE");
-    bytes32 public constant MINREQ_ROLE = keccak256("MINREQ_ROLE");
+    //where the NFT metadata URI is located.  This should be a URL pointing to a JSON file in accordance with the OpenSea format (https://docs.opensea.io/docs/metadata-standards)
+    string public URIaddr;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() initializer {}
@@ -109,7 +105,7 @@ contract DaobiVoteContract is Initializable, ERC721Upgradeable, ERC721URIStorage
 
     function targetDaobi(address payable _daobi) public onlyRole(VOTE_ADMIN_ROLE) {
         tokenContract = _daobi;
-        daobi = DAObi(_daobi);
+        daobi = IDAObi3(_daobi);
     }
 
     function setMinimumTokenReq(uint256 _minDB) public onlyRole(MINREQ_ROLE) {
@@ -249,4 +245,11 @@ contract DaobiVoteContract is Initializable, ERC721Upgradeable, ERC721URIStorage
     {
         return super.supportsInterface(interfaceId);
     }
+
+     /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }
