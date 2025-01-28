@@ -13,15 +13,7 @@ const config: HardhatUserConfig = {
       url: "https://rpc-mainnet.maticvigil.com",
       // accounts: [process.env.PRIVATE_KEY || ""],
     },
-    polygonMumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
-      // accounts: [process.env.PRIVATE_KEY || ""],
-    },
     polygonAmoy: {
-      url: "https://rpc-amoy.maticvigil.com",
-      // accounts: [process.env.PRIVATE_KEY || ""],
-    },
-    amoy: {
       url: "https://rpc-amoy.maticvigil.com",
       // accounts: [process.env.PRIVATE_KEY || ""],
     },
@@ -40,9 +32,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       polygon: process.env.POLYSCAN_API_KEY,
-      polygonMumbai: process.env.POLYSCAN_API_KEY,
       polygonAmoy: process.env.POLYSCAN_API_KEY,
-      amoy: process.env.POLYSCAN_API_KEY,
     },
     customChains: [
       {
